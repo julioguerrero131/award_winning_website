@@ -1,8 +1,11 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "./Button";
 import { TiLocationArrow } from "react-icons/ti";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/all";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
   const [currentIndex, setCurrentIndex] = useState(1);
@@ -23,6 +26,15 @@ const Hero = () => {
     setHasClicked(true);
     setCurrentIndex(upComingVideoIndex);
   };
+
+  const getVideoSrc = (index: any) => `videos/hero-${index}.mp4`;
+
+  useEffect(() => {
+    if (loadedVideos === totalVideos - 1) {
+      setIsLoading(false);
+    };
+  }, [loadedVideos]);
+
 
   useGSAP(() => {
     if (hasClicked) {
@@ -46,7 +58,7 @@ const Hero = () => {
 
       });
     };
-  }, {dependencies: [currentIndex], revertOnUpdate: true});
+  }, { dependencies: [currentIndex], revertOnUpdate: true });
 
   useGSAP(() => {
     gsap.set('#video-frame', {
@@ -67,19 +79,29 @@ const Hero = () => {
     });
   });
 
-  const getVideoSrc = (index: any) => `videos/hero-${index}.mp4`;
-
   return (
     <div className="relative h-dvh w-screen overflow-x-hidden">
+      {
+        isLoading && (
+          <div className="flex-center absolute z-[100] h-dvh w-screen overflow-hidden bg-violet-50">
+            <div className="three-body">
+              <div className="three-body__dot" />
+              <div className="three-body__dot" />
+              <div className="three-body__dot" />
+            </div>
+          </div>
+        )
+      }
+
       <div id="video-frame" className="relative z-10 h-dvh w-screen overflow-hidden rounded-lg bg-blue-75">
         <div>
           <div className="mask-clip-path absolute-center absolute z-50 size-64 cursor-pointer overflow-hidden rounded-lg">
             <div onClick={handleMiniVdClick} className="origin-center scale-50 opacity-0 transition-all duration-500 ease-in hover:scale-100 hover:opacity-100">
-              <video 
+              <video
                 ref={nextVideoRef}
                 src={getVideoSrc(upComingVideoIndex)}
                 loop
-                muted 
+                muted
                 id="current-video"
                 className="size-64 origin-center scale-150 object-cover object-center"
                 onLoadedData={handleVideoLoad}
@@ -87,7 +109,7 @@ const Hero = () => {
             </div>
           </div>
 
-          <video 
+          <video
             ref={nextVideoRef}
             src={getVideoSrc(currentIndex)}
             loop
@@ -97,7 +119,7 @@ const Hero = () => {
             onLoadedData={handleVideoLoad}
           />
 
-          <video 
+          <video
             src={getVideoSrc(currentIndex === totalVideos + 1 ? 1 : currentIndex)}
             autoPlay
             loop
@@ -119,13 +141,13 @@ const Hero = () => {
 
             <p className="mb-5 max-w-64 font-robert-regular text-blue-100">
               Enter the Metagame Layer <br />
-              Unleash the Play Economy 
+              Unleash the Play Economy
             </p>
 
-            <Button 
-              id="watch-trailer" 
-              title="Watch Trailer" 
-              LeftIcon={TiLocationArrow} 
+            <Button
+              id="watch-trailer"
+              title="Watch Trailer"
+              LeftIcon={TiLocationArrow}
               containerClass="bg-yellow-300 flex-center gap-1"
             />
           </div>

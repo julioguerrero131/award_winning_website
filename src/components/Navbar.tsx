@@ -84,7 +84,7 @@ const Navbar = () => {
                 className="hidden" 
                 src="/audio/loop.mp3" 
                 loop 
-                autoPlay 
+                // autoPlay 
               />
               {[1, 2, 3, 4].map((bar) => (
                 <div
